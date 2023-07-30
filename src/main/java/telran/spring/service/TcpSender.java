@@ -16,12 +16,11 @@ public class TcpSender implements Sender {
 	@Override
 	public String send(Message message) {
 		log.debug("TCP service received message {}", message); // message вставится вместо {}
-		String res = "TCP sender haven't received TcpMessage";
+		String res = errorMessage;
 		if (message instanceof TcpMessage) {
 			TcpMessage tcpMessage = (TcpMessage) message;
 			res = String.format("tcp sender text: %s has been sent to hostname %s, port %d", tcpMessage.text, tcpMessage.getHostName(), tcpMessage.getPort());
 		} else {
-			log.error("The message has wrong type");
 			throw new IllegalArgumentException(res);
 		}
 		return res;

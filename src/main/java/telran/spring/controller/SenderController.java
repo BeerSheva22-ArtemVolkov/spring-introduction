@@ -14,6 +14,7 @@ import jakarta.annotation.PreDestroy;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import telran.spring.exception.NotFoundException;
 import telran.spring.model.Message;
 import telran.spring.service.Sender;
 
@@ -35,25 +36,20 @@ public class SenderController {
 	@PostMapping
 	// по типу message должен найти service
 	// TODO
-	ResponseEntity<String> send(@RequestBody @Valid Message message) {
+	String send(@RequestBody @Valid Message message) {
 		log.debug("controller received message {}", message);
 
 		Sender sender = sendersMap.get(message.type);
-		String resWrong = "Wrong message type " + message.type;
-		String resRight = null;
+		String res = "Email sender have not received EmailMessage";
+		String resWrong = message.type + " type not found";
 		
 		// Помещается ответ с кодом Bad Request
-		ResponseEntity<String> res = ResponseEntity.badRequest().body(resWrong);
+//		ResponseEntity<String> res = ResponseEntity.badRequest().body(resWrong);
 
 		if (sender != null) {
-			try {
-				resRight = sender.send(message);
-				res = ResponseEntity.ok().body(resRight);
-			} catch (Exception e) {
-				res = ResponseEntity.badRequest().body(e.getMessage());
-			}
+			res = sender.send(message);
 		} else {
-			log.error(resWrong);
+			throw new IllegalArgumentException(resWrong);
 		}
 		return res;
 	}
