@@ -32,7 +32,7 @@ public class SmsSender implements Sender {
 	}
 	
 	@Override
-	public Class<? extends Message> getMessageTypeObject() {
+	public Class<? extends Message> getMessageType() {
 		return SmsMessage.class;
 	}
 

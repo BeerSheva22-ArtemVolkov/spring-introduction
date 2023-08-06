@@ -32,7 +32,7 @@ public class TcpSender implements Sender {
 	}
 	
 	@Override
-	public Class<? extends Message> getMessageTypeObject() {
+	public Class<? extends Message> getMessageType() {
 		return TcpMessage.class;
 	}
 

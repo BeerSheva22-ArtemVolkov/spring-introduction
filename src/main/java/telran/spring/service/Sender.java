@@ -7,5 +7,5 @@ public interface Sender {
 	
 	String send(Message message);
 	String getType();
-	Class<? extends Message> getMessageTypeObject();
+	Class<? extends Message> getMessageType();
 }
