@@ -18,7 +18,6 @@ public class SpringIntorductionApplication {
 		// - @RestController (с ним работает bin servlet)
 		// - @ControllerAdvice
 		// - @Service
-		// - 
 		SpringApplication.run(SpringIntorductionApplication.class, args);
 
 		// с объектами работаем "мы", а с bean-ми Spring
