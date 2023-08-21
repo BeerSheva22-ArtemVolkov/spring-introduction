@@ -9,14 +9,19 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import telran.spring.controller.SenderController;
 import telran.spring.model.Message;
+import telran.spring.security.RolesConfiguration;
+import telran.spring.security.RolesConfigurationImpl;
+import telran.spring.security.jwt.*;
 import telran.spring.service.Sender;
 
 @Service
@@ -39,9 +44,11 @@ class MockSender implements Sender {
 
 }
 
-@WebMvcTest({ SenderController.class, MockSender.class }) // говорит что бины веба будут загружены, но ни одного бина
-															// апп контекста не будет загружено
-// передается массив объектов клааса класс, которые предполагаеются бинами (должны входить в апп контекст)
+// говорит что бины веба будут загружены, но ни одного бина апп контекста не будет загружено
+@WebMvcTest(value = { SenderController.class, MockSender.class, SecurityConfiguration.class }, excludeFilters = {
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class) })
+@WithMockUser(roles = { "USER", "ADMIN" }, username = "admin")
+// передается массив объектов класса класс, которые предполагаеются бинами (должны входить в апп контекст)
 
 // mvc Moc - веб сервер(нереальный) для теста с нереальными запросами
 class SendersCotrollerTest {
@@ -51,7 +58,7 @@ class SendersCotrollerTest {
 	MockMvc mockMvc; // будет передавать запросы вместо клиента
 
 	@Autowired
-	ObjectMapper mapper;
+	ObjectMapper mapper; // ссылка на построенный бин (объект класса) из аппл контекста
 
 	Message message;
 	String sendUrl = "http://localhost:8080/sender";
@@ -76,6 +83,13 @@ class SendersCotrollerTest {
 		String response = getRequestBase(messageJson).andExpect(status().isOk()).andReturn().getResponse()
 				.getContentAsString();
 		assertEquals("test", response);
+	}
+
+	@Test
+	@WithMockUser(roles = { "USER" }, username = "admin")
+	void sendFlow403() throws Exception {
+		String messageJson = mapper.writeValueAsString(message);
+		getRequestBase(messageJson).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -123,29 +137,31 @@ class SendersCotrollerTest {
 
 	@Test
 	void isTypePathParamExists() throws Exception {
-		String responseJson = mockMvc.perform(get(isTypePathUrl + "?type=test")).andDo(print()).andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
+		String responseJson = mockMvc.perform(get(isTypePathUrl + "?type=test")).andDo(print())
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		Boolean responseBoolean = mapper.readValue(responseJson, boolean.class);
 		assertTrue(responseBoolean);
 	}
 
 	@Test
 	void isTypePathParamNotExists() throws Exception {
-		String responseJson = mockMvc.perform(get(isTypePathUrl + "?type=test1")).andDo(print()).andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
+		String responseJson = mockMvc.perform(get(isTypePathUrl + "?type=test1")).andDo(print())
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		Boolean responseBoolean = mapper.readValue(responseJson, boolean.class);
 		assertFalse(responseBoolean);
 	}
-	
+
 	@Test
 	void isTypePathParamMissing() throws Exception {
 		String responseJson = mockMvc.perform(get(isTypePathUrl)).andDo(print()).andExpect(status().isBadRequest())
 				.andReturn().getResponse().getContentAsString();
 		assertEquals("isTypeExistsParam.type: must not be empty", responseJson);
 	}
-	
+
 	private ResultActions getRequestBase(String messageJson) throws Exception {
 		return mockMvc.perform(post(sendUrl).contentType(MediaType.APPLICATION_JSON).content(messageJson))
 				.andDo(print());
 	}
 }
+
+// из bean-authentication получаем security context и идем в bean-authorization

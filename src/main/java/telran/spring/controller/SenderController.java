@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import telran.spring.exception.NotFoundException;
+import telran.spring.exceptions.NotFoundException;
 import telran.spring.model.Message;
 import telran.spring.service.Sender;
 
@@ -85,7 +85,7 @@ public class SenderController {
 
 	@PreDestroy // методы, аннотируемые этой аннтоацией будут вызваны (инф-я заносится в файл)
 	void shutdown() {
-		log.info("context close");
+		log.info("context closed");
 	}
 
 }
