@@ -12,7 +12,7 @@ import telran.spring.model.SmsMessage;
 public class SmsSender implements Sender {
 
 	static final String SERVICE_NAME = "sms";
-	
+	 
 	@Override
 	public String send(Message message) {
 		log.debug("SMS service received message {}", message); // message вставится вместо {}

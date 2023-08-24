@@ -8,4 +8,4 @@ public class SmsMessage extends Message {
 
 	@Pattern(regexp = "\\d{5,10}")
 	public String phoneNumber;
-}
+} 

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication // Указывает, что это bean
-public class SpringIntorductionApplication {
+public class SpringIntorductionApplication { 
 
 	public static void main(String[] args) {
 		// run строит аппликационный контекст и помещает туда определенные bean-ы, управляемые объектом
@@ -18,7 +18,7 @@ public class SpringIntorductionApplication {
 		// - @RestController (с ним работает bin servlet)
 		// - @ControllerAdvice
 		// - @Service
-		SpringApplication.run(SpringIntorductionApplication.class, args);
+		SpringApplication.run(SpringIntorductionApplication.class, args); 
 
 		// с объектами работаем "мы", а с bean-ми Spring
 		// bean - это объект управляемый Spring-ом, находящийся в аппликационном контексте

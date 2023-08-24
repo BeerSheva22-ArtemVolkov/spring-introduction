@@ -20,7 +20,7 @@ public class TcpSender implements Sender {
 		if (message instanceof TcpMessage) {
 			TcpMessage tcpMessage = (TcpMessage) message;
 			res = String.format("tcp sender text: %s has been sent to hostname %s, port %d", tcpMessage.text, tcpMessage.getHostName(), tcpMessage.getPort());
-		} else {
+		} else { 
 			throw new IllegalArgumentException(res);
 		}
 		return res;

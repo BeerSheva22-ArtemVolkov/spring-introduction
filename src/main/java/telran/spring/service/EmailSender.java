@@ -12,7 +12,7 @@ import telran.spring.model.Message;
 public class EmailSender implements Sender {
 
 	static final String SERVICE_NAME = "email";
-	
+	 
 	@Override
 	public String send(Message message) {
 		log.debug("Email service received message {}", message); // message вставится вместо {}

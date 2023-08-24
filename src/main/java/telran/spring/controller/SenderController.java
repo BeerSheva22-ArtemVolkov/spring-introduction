@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +38,7 @@ public class SenderController {
 	@PostMapping
 	// по типу message должен найти service
 	String send(@RequestBody @Valid Message message) {
+		log.warn("SenderController - send");
 		log.debug("controller received message {}", message);
 
 		Sender sender = sendersMap.get(message.type);
@@ -58,11 +58,13 @@ public class SenderController {
 
 	@GetMapping
 	Set<String> getTypes() {
+		log.warn("SenderController - getTypes");
 		return sendersMap.keySet();
 	}
 
 	@GetMapping("type/{typeName}")
 	boolean isTypeExistsPath(@PathVariable(name = "typeName") String type) {
+		log.warn("SenderController - isTypeExistsPath");
 		log.debug("Type inside a path {}", type);
 		return sendersMap.containsKey(type);
 	}
@@ -70,12 +72,14 @@ public class SenderController {
 	// с параметром
 	@GetMapping("type")
 	boolean isTypeExistsParam(@RequestParam(name = "type", defaultValue = "") @NotEmpty String type) {
+		log.warn("SenderController - isTypeExistsParam");
 		log.debug("Type inside a parameter {}", type);
-		return sendersMap.containsKey(type);
+		return sendersMap.containsKey(type); 
 	}
 
 	@PostConstruct // бины уже построены (инф-я считывается из файла)
 	void init() {
+		log.warn("SenderController - init");
 		sendersList.forEach(sender -> {
 			sendersMap.put(sender.getType(), sender);
 		});
@@ -85,6 +89,7 @@ public class SenderController {
 
 	@PreDestroy // методы, аннотируемые этой аннтоацией будут вызваны (инф-я заносится в файл)
 	void shutdown() {
+		log.warn("SenderController - shutdown");
 		log.info("context closed");
 	}
 

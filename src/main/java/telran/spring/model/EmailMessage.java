@@ -3,7 +3,7 @@ package telran.spring.model;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
 
-@Data
+@Data 
 public class EmailMessage extends Message {
 
 	@Email
